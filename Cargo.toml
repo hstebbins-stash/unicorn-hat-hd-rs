@@ -1,24 +1,26 @@
 [package]
-name = "unicorn_hat_hd"
-version = "0.2.1"
-authors = ["Jacob Helwig <jacob@technosorcery.net>"]
+name = "unicorn_hat_hd_2"
+edition = "2018"
+version = "0.3.0"
+authors = ["Harry Stebbins <hcstebbins@gmail.com>"]
 description = "Provides an interface to the Pimoroni Unicorn HAT HD on a Raspberry PI"
-repository = "https://github.com/jhelwig/unicorn-hat-hd-rs"
+repository = "https://github.com/hstebbins-stash/unicorn-hat-hd-rs"
 readme = "README.md"
 license = "BSD-3-Clause"
 keywords = ["pimoroni"]
 categories = ["hardware-support"]
 exclude = [
     ".vscode/*",
+    ".idea/*"
 ]
 
 [features]
 default = ["hardware"]
-hardware = ["spidev"]
+hardware = ["rppal"]
 fake-hardware = ["ansi_term"]
 
 [dependencies]
 ansi_term = { version = "0.12.0", optional = true }
-failure = "0.1.1"
+failure = "0.1"
 rgb = "0.8"
-spidev = { version = "0.3.0", optional = true }
+rppal = { version = "0.12.0", optional = true }

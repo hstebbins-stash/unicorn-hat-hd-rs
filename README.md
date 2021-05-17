@@ -1,24 +1,24 @@
-# unicorn-hat-hd [![Build Status](https://travis-ci.org/jhelwig/unicorn-hat-hd-rs.svg?branch=master)](https://travis-ci.org/jhelwig/unicorn-hat-hd-rs)
+# unicorn-hat-hd-2
 
-Rust library for interacting with the Pimoroni Unicorn HAT HD.
+Rust library for interacting with the Pimoroni Unicorn HAT HD. This is a [fork](https://github.com/jhelwig/unicorn-hat-hd-rs) that builds on stable Rust and updates dependencies.
 
 ## Documentation
 
-The docs can be found online at [docs.rs](https://docs.rs/unicorn_hat_hd/), or be built using `cargo doc`.
+The docs can be found online at [docs.rs](https://docs.rs/unicorn_hat_hd_2/), or be built using `cargo doc`.
 
 ## Example
 
-Add `unicorn_hat_hd` to your `Cargo.toml`.
+Add `unicorn_hat_hd_2` to your `Cargo.toml`.
 
 ```toml
 [dependencies]
-unicorn_hat_hd = "0.2"
+unicorn_hat_hd_2 = "0.3"
 ```
 
-Add `unicorn_hat_hd` to your crate root.
+Add `unicorn_hat_hd_2` to your crate root.
 
 ```rust
-extern crate unicorn_hat_hd;
+extern crate unicorn_hat_hd_2;
 ```
 
 Create a default `UnicornHatHd`, and start setting some pixels.
@@ -49,16 +49,14 @@ so that it can compile on platforms other than Linux & the Raspberry PI.
 In the `Cargo.toml`:
 
 ```toml
-[dependencies.unicorn_hat_hd]
+[dependencies.unicorn_hat_hd_2]
 version = "*"
 default-features = false
 features = ["fake-hardware"]
 ```
 
 Though, you should replace the `version = "*"` with an actual version
-constraint. Another thing of note is that the emulated display mode does not
-respect any display rotation that has been set, and will always output as though
-`Rotate::RotNone` were set.
+constraint. 
 
 ## Copyright and license
 
