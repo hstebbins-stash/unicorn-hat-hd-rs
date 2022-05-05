@@ -1,7 +1,7 @@
 [package]
 name = "unicorn_hat_hd_2"
 edition = "2018"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["Harry Stebbins <hcstebbins@gmail.com>"]
 description = "Provides an interface to the Pimoroni Unicorn HAT HD on a Raspberry PI"
 repository = "https://github.com/hstebbins-stash/unicorn-hat-hd-rs"
@@ -23,4 +23,4 @@ fake-hardware = ["ansi_term"]
 ansi_term = { version = "0.12.0", optional = true }
 failure = "0.1"
 rgb = "0.8"
-rppal = { version = "0.12.0", optional = true }
+rppal = { version = "0.13.1", optional = true }

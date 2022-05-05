@@ -13,13 +13,14 @@ use failure::Error;
 #[cfg(feature = "hardware")]
 use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
 
+const LED_SIZE: usize = 16;
 const BUFFER_SIZE: usize = 256 * 3;
-const BLACK: u8 = 0;
+const BLACK: rgb::RGB8 = rgb::RGB8::new(0, 0, 0);
 
 #[cfg(feature = "hardware")]
 /// Provide high-level access to the Unicorn HAT HD.
 pub struct UnicornHatHd {
-    leds: [u8; BUFFER_SIZE],
+    leds: [[rgb::RGB8; LED_SIZE]; LED_SIZE],
     spi: Spi,
 }
 
@@ -36,7 +37,7 @@ impl UnicornHatHd {
         let spi = Spi::new(bus, slave_select, 9_000_000, Mode::Mode0)?;
 
         Ok(UnicornHatHd {
-            leds: [BLACK; BUFFER_SIZE],
+            leds: [[rgb::RGB8::new(0, 0, 0); LED_SIZE]; LED_SIZE],
             spi,
         })
     }
@@ -55,7 +56,21 @@ impl UnicornHatHd {
     /// Write the display buffer to the Unicorn HAT HD.
     pub fn display(&mut self) -> Result<(), Error> {
         self.spi.write(&[0x72])?;
-        self.spi.write(&self.leds)?;
+
+        let mut res: [u8; BUFFER_SIZE] = [0; BUFFER_SIZE];
+
+        let mut i = 0;
+        for rgb in self.leds.iter().flat_map(|r| r.iter()) {
+            res[i] = rgb.r;
+            i += 1;
+            res[i] = rgb.g;
+            i += 1;
+            res[i] = rgb.b;
+            i += 1;
+        }
+
+        self.spi.write(&res)?;
+
         Ok(())
     }
 
@@ -63,9 +78,9 @@ impl UnicornHatHd {
     /// Write the display buffer to the Unicorn HAT HD.
     pub fn display(&mut self) -> Result<(), Error> {
         println!("Unicorn HAT HD:");
-        for y in 0..16 {
+        for y in 0..LED_SIZE {
             let mut line = vec![];
-            for x in 0..16 {
+            for x in 0..LED_SIZE {
                 let pixel = self.get_pixel(x, y);
                 line.push(RGB(pixel.r, pixel.g, pixel.b).paint("*"));
             }
@@ -80,9 +95,7 @@ impl UnicornHatHd {
     /// The origin (`(0, 0)`) is the top-left of the display, with `x` & `y`
     /// increasing to the right, and down, respectively.
     pub fn set_pixel(&mut self, x_coord: usize, y_coord: usize, c: rgb::RGB8) {
-        self.leds[(y_coord * 16) + (x_coord * 3)] = c.r;
-        self.leds[(y_coord * 16) + (x_coord * 3 + 1)] = c.g;
-        self.leds[(y_coord * 16) + (x_coord * 3 + 2)] = c.b;
+        self.leds[y_coord][x_coord] = rgb::RGB8::new(c.r, c.g, c.b)
     }
 
     /// Return a tuple of an individual pixel's RGB value.
@@ -93,11 +106,7 @@ impl UnicornHatHd {
     /// *NOTE*: This returns what's in the display buffer, not what the
     /// physical pixel is set to.
     pub fn get_pixel(&self, x_coord: usize, y_coord: usize) -> rgb::RGB8 {
-        let red = self.leds[(y_coord * 16) + (x_coord * 3)];
-        let green = self.leds[(y_coord * 16) + (x_coord * 3 + 1)];
-        let blue = self.leds[(y_coord * 16) + (x_coord * 3 + 2)];
-
-        rgb::RGB8::new(red, green, blue)
+        self.leds[y_coord][x_coord]
     }
 
     /// Clear the internal buffer of pixel states.
@@ -105,7 +114,7 @@ impl UnicornHatHd {
     /// To clear the display itself, you'll still need to call
     /// [`display`](#method.display) to update the Unicorn HAT HD.
     pub fn clear_pixels(&mut self) {
-        self.leds = [BLACK; BUFFER_SIZE];
+        self.leds = [[BLACK; LED_SIZE]; LED_SIZE];
     }
 }
 
