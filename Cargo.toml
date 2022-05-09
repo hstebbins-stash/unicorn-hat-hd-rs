@@ -1,7 +1,7 @@
 [package]
 name = "unicorn_hat_hd_2"
 edition = "2018"
-version = "0.4.0"
+version = "0.4.1"
 authors = ["Harry Stebbins <hcstebbins@gmail.com>"]
 description = "Provides an interface to the Pimoroni Unicorn HAT HD on a Raspberry PI"
 repository = "https://github.com/hstebbins-stash/unicorn-hat-hd-rs"
