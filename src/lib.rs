@@ -14,6 +14,7 @@ use failure::Error;
 use rppal::spi::{Bus, Mode, SlaveSelect, Spi};
 
 const LED_SIZE: usize = 16;
+#[cfg(feature = "hardware")]
 const BUFFER_SIZE: usize = 256 * 3;
 const BLACK: rgb::RGB8 = rgb::RGB8::new(0, 0, 0);
 
@@ -27,7 +28,7 @@ pub struct UnicornHatHd {
 #[cfg(feature = "fake-hardware")]
 /// Provide high-level access to an emulated Unicorn HAT HD.
 pub struct UnicornHatHd {
-    leds: [u8; (BUFFER_SIZE)],
+    leds: [[rgb::RGB8; LED_SIZE]; LED_SIZE],
 }
 
 impl UnicornHatHd {
@@ -37,7 +38,7 @@ impl UnicornHatHd {
         let spi = Spi::new(bus, slave_select, 9_000_000, Mode::Mode0)?;
 
         Ok(UnicornHatHd {
-            leds: [[rgb::RGB8::new(0, 0, 0); LED_SIZE]; LED_SIZE],
+            leds: [[BLACK; LED_SIZE]; LED_SIZE],
             spi,
         })
     }
@@ -46,9 +47,9 @@ impl UnicornHatHd {
     /// Create a fake `UnicornHatHd`
     ///
     /// `_bus` and `_slave_select` are completely unused by the fake `UnicornHatHd`.
-    pub fn new(_bus: Bus, _slave_select: SlaveSelect) -> Result<UnicornHatHd, Error> {
+    pub fn new(_bus: (), _slave_select: ()) -> Result<UnicornHatHd, Error> {
         Ok(UnicornHatHd {
-            leds: [BLACK; BUFFER_SIZE],
+            leds: [[BLACK; LED_SIZE]; LED_SIZE],
         })
     }
 
@@ -122,7 +123,13 @@ impl Default for UnicornHatHd {
     /// Create a `UnicornHatHd` using the default `Bus::Spi0` and `SlaveSelect::Ss0`.
     ///
     /// This will panic if initialization fails.
+    #[cfg(feature = "hardware")]
     fn default() -> UnicornHatHd {
         UnicornHatHd::new(Bus::Spi0, SlaveSelect::Ss0).unwrap()
+    }
+
+    #[cfg(feature = "fake-hardware")]
+    fn default() -> UnicornHatHd {
+        UnicornHatHd::new((), ()).unwrap()
     }
 }
